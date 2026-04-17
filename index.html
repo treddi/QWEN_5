@@ -4,30 +4,67 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>World Time Converter | Convert Time Between Cities Instantly (24h Format)</title>
-  <meta name="description" content="Free timezone converter with automatic DST handling. Convert local time between 500+ global cities instantly.">
+  <meta name="description" content="Free timezone converter with automatic DST handling. Convert local time between 500+ global cities instantly. Supports 24-hour format, cross-day calculations, and real-time accuracy.">
+  <meta name="keywords" content="time converter, timezone converter, world clock, time difference, DST converter, 24 hour time converter, convert time between cities, international time zones">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://yourdomain.com">
   <meta name="theme-color" content="#8b5cf6">
+  <meta name="color-scheme" content="dark light">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "World Time Converter",
+    "description": "Free online tool to convert local time between any major global city instantly. Supports automatic daylight saving time (DST) handling.",
+    "url": "https://yourdomain.com",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any"
+  }
+  </script>
   <style>
     :root {
-      --bg: #0f172a; --bg-secondary: #1e293b; --card: rgba(30, 41, 59, 0.8);
-      --primary: #8b5cf6; --primary-hover: #7c3aed; --text: #f8fafc;
-      --text-muted: #94a3b8; --border: rgba(148, 163, 184, 0.1);
-      --success: #10b981; --warning: #f59e0b; --danger: #f43f5e;
-      --radius: 12px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --card: rgba(30, 41, 59, 0.8);
+      --primary: #8b5cf6;
+      --primary-hover: #7c3aed;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.1);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #f43f5e;
+      --radius: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: var(--font); background: linear-gradient(135deg, var(--bg) 0%, #1e1b4b 100%);
-      color: var(--text); line-height: 1.5; min-height: 100vh;
-      display: flex; justify-content: center; align-items: center; padding: 20px;
+      font-family: var(--font);
+      background: linear-gradient(135deg, var(--bg) 0%, #1e1b4b 100%);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .container { width: 100%; max-width: 800px; }
+    .container { width: 100%; max-width: 480px; }
     header { text-align: center; margin-bottom: 24px; }
-    header h1 { font-size: 1.85rem; font-weight: 700; margin-bottom: 6px;
+    header h1 { 
+      font-size: 1.85rem; font-weight: 700; margin-bottom: 6px;
       background: linear-gradient(to right, #fff, #94a3b8);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
     header p { color: var(--text-muted); font-size: 0.95rem; }
-    .card { background: var(--card); backdrop-filter: blur(10px);
-      border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; }
+    .card {
+      background: var(--card); backdrop-filter: blur(10px);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 28px 24px;
+    }
     .input-group { margin-bottom: 32px; position: relative; }
     .input-row { display: flex; gap: 8px; align-items: stretch; }
     .input-row input { flex: 1; }
@@ -35,119 +72,163 @@
     input[type="text"], input[type="date"], input[type="time"] {
       width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 8px;
       font-size: 1rem; font-family: var(--font); background: rgba(15, 23, 42, 0.6);
-      color: var(--text); transition: all 0.2s; }
-    input:focus { outline: none; border-color: var(--primary);
-      background: rgba(15, 23, 42, 0.8); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); }
+      color: var(--text); transition: all 0.2s;
+    }
+    input:focus { outline: none; border-color: var(--primary); background: rgba(15, 23, 42, 0.8); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); }
+    input::placeholder { color: var(--text-muted); opacity: 0.6; }
+    .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; text-align: right; }
     input[type="date"]::-webkit-calendar-picker-indicator,
     input[type="time"]::-webkit-calendar-picker-indicator {
       filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(224deg) brightness(103%) contrast(101%);
-      cursor: pointer; background-color: transparent; }
-    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0;
+      cursor: pointer;
+      background-color: transparent;
+    }
+    .autocomplete-list {
+      position: absolute; top: 100%; left: 0; right: 0;
       background: var(--bg-secondary); border: 1px solid var(--border);
       border-radius: 8px; max-height: 240px; overflow-y: auto;
-      list-style: none; z-index: 999; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
-      display: none; margin-top: 8px; }
+      list-style: none; z-index: 999; box-shadow: var(--shadow);
+      display: none; margin-top: 8px;
+    }
     .autocomplete-list.active { display: block; }
-    .autocomplete-list li { padding: 10px 12px; cursor: pointer; font-size: 0.95rem;
-      border-bottom: 1px solid var(--border); color: var(--text); }
+    .autocomplete-list li {
+      padding: 10px 12px; cursor: pointer; font-size: 0.95rem;
+      border-bottom: 1px solid var(--border); color: var(--text); transition: all 0.2s;
+    }
     .autocomplete-list li:last-child { border-bottom: none; }
     .autocomplete-list li:hover { background: rgba(139, 92, 246, 0.1); color: var(--primary); }
-    .btn-now { background: rgba(139, 92, 246, 0.1); border: 1.5px solid rgba(139, 92, 246, 0.3);
-      padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
-      font-weight: 600; color: var(--primary); transition: all 0.2s; }
+    .btn-now {
+      background: rgba(139, 92, 246, 0.1); border: 1.5px solid rgba(139, 92, 246, 0.3);
+      padding: 10px 14px; border-radius: 8px; cursor: pointer;
+      font-size: 0.9rem; font-weight: 600; color: var(--primary);
+      transition: all 0.2s; white-space: nowrap;
+    }
     .btn-now:hover { background: rgba(139, 92, 246, 0.2); transform: translateY(-1px); }
-    #swapBtn { display: flex; align-items: center; justify-content: center; gap: 6px;
+    #swapBtn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
       margin: 0 auto 16px; background: transparent; border: 1.5px solid var(--border);
-      padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem;
-      font-weight: 500; color: var(--text-muted); transition: all 0.2s; }
-    #swapBtn:hover { background: var(--bg-secondary); color: var(--primary);
-      border-color: var(--primary); transform: rotate(180deg); }
-    #convertBtn { width: 100%; padding: 16px; margin-top: 12px; background: var(--primary);
+      padding: 8px 14px; border-radius: 20px; cursor: pointer;
+      font-size: 0.85rem; font-weight: 500; color: var(--text-muted); transition: all 0.2s;
+    }
+    #swapBtn:hover { background: var(--bg-secondary); color: var(--primary); border-color: var(--primary); transform: rotate(180deg); }
+    #convertBtn {
+      width: 100%; padding: 16px; margin-top: 12px; background: var(--primary);
       color: white; border: none; border-radius: 8px; font-size: 1rem;
-      font-weight: 600; cursor: pointer; transition: all 0.2s; position: relative; }
-    #convertBtn:hover:not(:disabled) { background: var(--primary-hover);
-      transform: translateY(-1px); box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.3); }
+      font-weight: 600; cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    #convertBtn:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.3); }
     #convertBtn:disabled { background: var(--text-muted); opacity: 0.5; cursor: not-allowed; }
     #convertBtn.loading { color: transparent; }
-    #convertBtn.loading::after { content: ""; position: absolute; width: 20px; height: 20px;
-      top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid #fff;
-      border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    #convertBtn.loading::after {
+      content: ""; position: absolute; width: 20px; height: 20px; top: 50%; left: 50%;
+      transform: translate(-50%, -50%); border: 2px solid #fff; border-top-color: transparent;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
     @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
-    .error-msg, .success-msg { font-size: 0.85rem; margin-top: 12px; min-height: 20px; text-align: center; }
-    .error-msg { color: var(--danger); } .success-msg { color: var(--success); }
-    .result-container { margin-top: 24px; padding: 20px; background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius);
-      animation: fadeIn 0.3s ease; }
+    .error-msg, .success-msg { font-size: 0.85rem; margin-top: 12px; min-height: 20px; text-align: center; transition: all 0.2s; }
+    .error-msg { color: var(--danger); }
+    .success-msg { color: var(--success); }
+    .result-container {
+      margin-top: 24px; padding: 20px; background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius); animation: fadeIn 0.3s ease;
+    }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .clock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .clock-item { background: var(--bg-secondary); padding: 12px; border-radius: 8px;
-      text-align: center; border: 1px solid var(--border); }
-    .clock-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 0.5px; margin-bottom: 4px; }
+    .clock-item { background: var(--bg-secondary); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+    .clock-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
     .clock-city { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; color: var(--text); }
     .clock-date { display: flex; flex-direction: column; align-items: center; margin-bottom: 6px; }
     .clock-day { font-size: 0.95rem; font-weight: 600; color: var(--primary); margin-bottom: 1px; }
     .clock-full-date { font-size: 0.8rem; color: var(--text-muted); }
     .clock-time { font-size: 1.4rem; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
     .clock-offset { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-    .calculator-card { background: var(--bg-secondary); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px; margin-top: 20px; text-align: center; position: relative; overflow: hidden; }
-    .calculator-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(to right, var(--primary), var(--success)); }
-    .calc-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
-      color: var(--text-muted); margin-bottom: 12px; }
-    .calc-value { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
-    .calc-label { font-size: 0.9rem; color: var(--primary); }
-    .day-badge { display: block; text-align: center; padding: 6px 10px; border-radius: 6px;
-      font-size: 0.85rem; font-weight: 600; margin: 12px auto 0; width: fit-content; }
+    .day-badge {
+      display: block; text-align: center; padding: 6px 10px; border-radius: 6px;
+      font-size: 0.85rem; font-weight: 600; margin: 12px auto 0; width: fit-content;
+    }
     .day-same { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
     .day-next { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
     .day-prev { background: rgba(244, 63, 94, 0.1); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.2); }
-    .copy-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+    .copy-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
       margin-top: 14px; padding: 10px; background: transparent; border: 1.5px solid var(--border);
-      border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: var(--text-muted); transition: all 0.2s; }
+      border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: var(--text-muted); transition: all 0.2s;
+    }
     .copy-btn:hover { background: var(--bg-secondary); color: var(--text); border-color: var(--primary); }
     .hidden { display: none; }
-    @media (max-width: 480px) { .container { max-width: 480px; } .clock-grid { grid-template-columns: 1fr; }
-      header h1 { font-size: 1.5rem; } .card { padding: 20px 16px; }
-      .input-row { flex-direction: column; } .btn-now { width: 100%; } }
+    @media (max-width: 480px) {
+      .clock-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+      .card { padding: 20px 16px; }
+      .input-row { flex-direction: column; }
+      .btn-now { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
   </style>
 </head>
 <body>
   <div class="container" role="main">
-    <header><h1>🌍 World Time Converter</h1><p>Convert times between major global cities (24h format)</p></header>
+    <header>
+      <h1>🌍 World Time Converter</h1>
+      <p>Convert times between major global cities (24h format)</p>
+    </header>
     <div class="card">
       <form id="timeForm" novalidate>
-        <div class="input-group"><label for="sourceCity">Source City</label>
-          <input type="text" id="sourceCity" placeholder="e.g., Tokyo, New York, London" autocomplete="off">
-          <ul class="autocomplete-list" id="sourceList"></ul></div>
-        <div class="input-group"><label>Date & Time (24h format)</label><div class="input-row">
-          <input type="date" id="sourceDate" required><input type="time" id="sourceTime" step="60" required>
-          <button type="button" class="btn-now" id="btnNow">🕐 Now</button></div>
-          <div class="hint">Format: HH:MM (24-hour)</div></div>
-        <button type="button" id="swapBtn">⇄ Swap Cities</button>
-        <div class="input-group"><label for="targetCity">Target City</label>
-          <input type="text" id="targetCity" placeholder="e.g., Paris, Sydney, Dubai" autocomplete="off">
-          <ul class="autocomplete-list" id="targetList"></ul></div>
+        <div class="input-group">
+          <label for="sourceCity">Source City</label>
+          <input type="text" id="sourceCity" placeholder="e.g., Tokyo, New York, London" autocomplete="off" aria-autocomplete="list" aria-controls="sourceList">
+          <ul class="autocomplete-list" id="sourceList" role="listbox"></ul>
+        </div>
+        <div class="input-group">
+          <label>Date & Time (24h format)</label>
+          <div class="input-row">
+            <input type="date" id="sourceDate" required aria-label="Source date">
+            <input type="time" id="sourceTime" step="60" required aria-label="Source time">
+            <button type="button" class="btn-now" id="btnNow" aria-label="Use current date and time">🕐 Now</button>
+          </div>
+          <div class="hint">Format: HH:MM (24-hour)</div>
+        </div>
+        <button type="button" id="swapBtn" aria-label="Swap source and target cities">⇄ Swap Cities</button>
+        <div class="input-group">
+          <label for="targetCity">Target City</label>
+          <input type="text" id="targetCity" placeholder="e.g., Paris, Sydney, Dubai" autocomplete="off" aria-autocomplete="list" aria-controls="targetList">
+          <ul class="autocomplete-list" id="targetList" role="listbox"></ul>
+        </div>
         <button type="submit" id="convertBtn">Convert Time</button>
-        <div id="msgBox" class="error-msg"></div></form>
-      <div id="result" class="result-container hidden">
+        <div id="msgBox" class="error-msg" aria-live="polite"></div>
+      </form>
+      <div id="result" class="result-container hidden" aria-live="polite">
         <div class="clock-grid">
-          <div class="clock-item"><div class="clock-label">Source</div><div class="clock-city" id="resSourceCity"></div>
-            <div class="clock-date"><span class="clock-day" id="resSourceDay"></span>
-            <span class="clock-full-date" id="resSourceDate"></span></div>
-            <div class="clock-time" id="resSourceTime"></div><div class="clock-offset" id="resSourceOffset"></div></div>
-          <div class="clock-item"><div class="clock-label">Target</div><div class="clock-city" id="resTargetCity"></div>
-            <div class="clock-date"><span class="clock-day" id="resTargetDay"></span>
-            <span class="clock-full-date" id="resTargetDate"></span></div>
-            <div class="clock-time" id="resTargetTime"></div><div class="clock-offset" id="resTargetOffset"></div></div></div>
-        <div class="calculator-card"><div class="calc-title">Time Difference</div>
-          <div class="calc-value" id="calcDiffValue">--</div><div class="calc-label" id="calcDiffLabel">Calculating...</div></div>
+          <div class="clock-item" aria-label="Source city time">
+            <div class="clock-label">Source</div>
+            <div class="clock-city" id="resSourceCity"></div>
+            <div class="clock-date">
+              <span class="clock-day" id="resSourceDay"></span>
+              <span class="clock-full-date" id="resSourceDate"></span>
+            </div>
+            <div class="clock-time" id="resSourceTime"></div>
+            <div class="clock-offset" id="resSourceOffset"></div>
+          </div>
+          <div class="clock-item" aria-label="Target city time">
+            <div class="clock-label">Target</div>
+            <div class="clock-city" id="resTargetCity"></div>
+            <div class="clock-date">
+              <span class="clock-day" id="resTargetDay"></span>
+              <span class="clock-full-date" id="resTargetDate"></span>
+            </div>
+            <div class="clock-time" id="resTargetTime"></div>
+            <div class="clock-offset" id="resTargetOffset"></div>
+          </div>
+        </div>
         <div class="day-badge" id="resDayBadge"></div>
-        <button class="copy-btn" id="copyBtn">📋 Copy Result</button></div></div></div>
+        <button class="copy-btn" id="copyBtn" aria-label="Copy conversion result to clipboard">📋 Copy Result</button>
+      </div>
+    </div>
+  </div>
   <script>
-    const CITY_ALIASES = {"delhi":"new delhi","bombay":"mumbai","madras":"chennai","calcutta":"kolkata","bangalore":"bengaluru"};
-     const CITY_TZ = {
+    const CITY_ALIASES = { "delhi": "new delhi", "bombay": "mumbai", "madras": "chennai", "calcutta": "kolkata", "bangalore": "bengaluru" };
+    
+    const CITY_TZ = {
       // United States - Major Cities
       "new york": "America/New_York", "los angeles": "America/Los_Angeles", "chicago": "America/Chicago",
       "houston": "America/Chicago", "phoenix": "America/Phoenix", "philadelphia": "America/New_York",
@@ -1001,7 +1082,7 @@
       "gonville": "Pacific/Auckland", "arawhata": "Pacific/Auckland", "virginia": "Pacific/Auckland",
       "kowhai park": "Pacific/Auckland", "putiki": "Pacific/Auckland", "st johns hill": "Pacific/Auckland",
       "springvale": "Pacific/Auckland", "duchess street": "Pacific/Auckland", "otara": "Pacific/Auckland",
-       // South America - Complete List
+// South America - Complete List
 "buenos aires": "America/Argentina/Buenos_Aires", "cordoba": "America/Argentina/Cordoba", "rosario": "America/Argentina/Cordoba", "mendoza": "America/Argentina/Mendoza", "la plata": "America/Argentina/Buenos_Aires", "san miguel de tucuman": "America/Argentina/Tucuman", "mar del plata": "America/Argentina/Buenos_Aires", "salta": "America/Argentina/Salta", "santa fe": "America/Argentina/Cordoba", "san juan": "America/Argentina/San_Juan", "resistencia": "America/Argentina/Cordoba", "santiago del estero": "America/Argentina/Cordoba", "corrientes": "America/Argentina/Cordoba", "posadas": "America/Argentina/Cordoba", "neuquen": "America/Argentina/Salta", "bahia blanca": "America/Argentina/Buenos_Aires", "parana": "America/Argentina/Cordoba", "formosa": "America/Argentina/Cordoba", "san luis": "America/Argentina/San_Luis", "la rioja": "America/Argentina/La_Rioja", "catamarca": "America/Argentina/Catamarca", "rio gallegos": "America/Argentina/Rio_Gallegos", "ushuaia": "America/Argentina/Ushuaia",
 
 "sao paulo": "America/Sao_Paulo", "rio de janeiro": "America/Sao_Paulo", "brasilia": "America/Sao_Paulo", "salvador": "America/Bahia", "fortaleza": "America/Fortaleza", "belo horizonte": "America/Sao_Paulo", "manaus": "America/Manaus", "curitiba": "America/Sao_Paulo", "recife": "America/Recife", "porto alegre": "America/Sao_Paulo", "belem": "America/Belem", "goiania": "America/Sao_Paulo", "guarulhos": "America/Sao_Paulo", "campinas": "America/Sao_Paulo", "sao luis": "America/Fortaleza", "sao goncalo": "America/Sao_Paulo", "maceio": "America/Maceio", "duque de caxias": "America/Sao_Paulo", "natal": "America/Fortaleza", "teresina": "America/Fortaleza", "campo grande": "America/Campo_Grande", "nova iguacu": "America/Sao_Paulo", "sao bernardo do campo": "America/Sao_Paulo", "joao pessoa": "America/Fortaleza", "santo andre": "America/Sao_Paulo", "osasco": "America/Sao_Paulo", "jaboatao dos guararapes": "America/Recife", "sao jose dos campos": "America/Sao_Paulo", "ribeirao preto": "America/Sao_Paulo", "uberlandia": "America/Sao_Paulo", "contagem": "America/Sao_Paulo", "aracaju": "America/Maceio", "feira de santana": "America/Bahia", "cuiaba": "America/Cuiaba", "joinville": "America/Sao_Paulo", "juiz de fora": "America/Sao_Paulo", "londrina": "America/Sao_Paulo", "aparecida de goiania": "America/Sao_Paulo", "niteroi": "America/Sao_Paulo", "anapolis": "America/Sao_Paulo", "florianopolis": "America/Sao_Paulo", "vitoria": "America/Sao_Paulo", "serra": "America/Sao_Paulo", "caxias do sul": "America/Sao_Paulo", "vila velha": "America/Sao_Paulo", "maua": "America/Sao_Paulo", "sao joao de meriti": "America/Sao_Paulo", "santos": "America/Sao_Paulo", "mogi das cruzes": "America/Sao_Paulo", "betim": "America/Sao_Paulo", "diadema": "America/Sao_Paulo", "jundiai": "America/Sao_Paulo", "campina grande": "America/Fortaleza", "olinda": "America/Recife", "carapicuiba": "America/Sao_Paulo", "piracicaba": "America/Sao_Paulo", "cariacica": "America/Sao_Paulo", "bauru": "America/Sao_Paulo", "montes claros": "America/Sao_Paulo", "sao vicente": "America/Sao_Paulo", "pelotas": "America/Sao_Paulo", "canoas": "America/Sao_Paulo", "franca": "America/Sao_Paulo", "paulista": "America/Recife", "limeira": "America/Sao_Paulo", "suzano": "America/Sao_Paulo", "taboao da serra": "America/Sao_Paulo", "sumare": "America/Sao_Paulo", "presidente prudente": "America/Sao_Paulo", "divinopolis": "America/Sao_Paulo", "santa barbara d'oeste": "America/Sao_Paulo", "amazonas": "America/Manaus", "novo hamburgo": "America/Sao_Paulo", "sete lagoas": "America/Sao_Paulo", "rio claro": "America/Sao_Paulo", "itaquaquecetuba": "America/Sao_Paulo", "sao jose do rio preto": "America/Sao_Paulo", "francisco morato": "America/Sao_Paulo", "itu": "America/Sao_Paulo", "braganca paulista": "America/Sao_Paulo", "votorantim": "America/Sao_Paulo", "campo limpo paulista": "America/Sao_Paulo", "varzea paulista": "America/Sao_Paulo", "atibaia": "America/Sao_Paulo", "araras": "America/Sao_Paulo", "cabo frio": "America/Sao_Paulo", "itapecerica da serra": "America/Sao_Paulo", "valinhos": "America/Sao_Paulo", "santana de parnaiba": "America/Sao_Paulo", "sorocaba": "America/Sao_Paulo",
@@ -1020,7 +1101,7 @@
 
 "quito": "America/Guayaquil", "guayaquil": "America/Guayaquil", "cuenca": "America/Guayaquil", "santo domingo": "America/Guayaquil", "machala": "America/Guayaquil", "manta": "America/Guayaquil", "portoviejo": "America/Guayaquil", "ambato": "America/Guayaquil", "esmeraldas": "America/Guayaquil", "quevedo": "America/Guayaquil", "riobamba": "America/Guayaquil", "milagro": "America/Guayaquil", "iban": "America/Guayaquil", "loja": "America/Guayaquil", "la libertad": "America/Guayaquil", "babahoyo": "America/Guayaquil", "sangolqui": "America/Guayaquil", "daule": "America/Guayaquil", "latacunga": "America/Guayaquil", "tulcan": "America/Guayaquil",
 
-"asuncion": "America/Asuncion", "ciudad del este": "America/Asuncion", "san lorenzo": "America/Asuncion", "luque": "America/Asuncion", "capiata": "America/Asuncion", "lambar": "America/Asuncion", "fernando de la mora": "America/Asuncion", "limpio": "America/Asuncion", "nueva italia": "America/Asuncion", "encarnacion": "America/Asuncion", "pedro juan caballero": "America/Asuncion", "coronel oviedo": "America/Asuncion", "concepcion": "America/Asuncion", "villarrica": "America/Asuncion", "paraguari": "America/Asuncion"
+"asuncion": "America/Asuncion", "ciudad del este": "America/Asuncion", "san lorenzo": "America/Asuncion", "luque": "America/Asuncion", "capiata": "America/Asuncion", "lambar": "America/Asuncion", "fernando de la mora": "America/Asuncion", "limpio": "America/Asuncion", "nueva italia": "America/Asuncion", "encarnacion": "America/Asuncion", "pedro juan caballero": "America/Asuncion", "coronel oviedo": "America/Asuncion", "concepcion": "America/Asuncion", "villarrica": "America/Asuncion", "paraguari": "America/Asuncion",
       
       // Pacific Islands
       "fiji": "Pacific/Fiji", "suva": "Pacific/Fiji", "lautoka": "Pacific/Fiji",
@@ -1061,23 +1142,130 @@
       "houailou": "Pacific/Noumea", "boulouparis": "Pacific/Noumea", "la tontouta": "Pacific/Noumea"
     };
 
-    function formatCityName(name){const s={"new delhi":"New Delhi","new york":"New York","los angeles":"Los Angeles","san francisco":"San Francisco","kuala lumpur":"Kuala Lumpur","rio de janeiro":"Rio de Janeiro","sao paulo":"São Paulo","ho chi minh":"Ho Chi Minh","tel aviv":"Tel Aviv","abu dhabi":"Abu Dhabi","mexico city":"Mexico City","buenos aires":"Buenos Aires","cape town":"Cape Town"};return s[name.toLowerCase()]||name.replace(/\b\w/g,l=>l.toUpperCase());}
-    function resolveCity(i){const k=i.toLowerCase().trim();return CITY_TZ[k]||CITY_TZ[CITY_ALIASES[k]]||null;}
-    function getDisplayName(i){const k=i.toLowerCase().trim();return formatCityName(CITY_ALIASES[k]||k);}
-    const cities=Object.keys(CITY_TZ).sort(),now=new Date();
-    document.getElementById('sourceDate').value=now.toISOString().split('T')[0];
-    document.getElementById('sourceTime').value=now.toTimeString().slice(0,5);
-    const form=document.getElementById('timeForm'),sourceInput=document.getElementById('sourceCity'),targetInput=document.getElementById('targetCity'),dateInput=document.getElementById('sourceDate'),timeInput=document.getElementById('sourceTime'),swapBtn=document.getElementById('swapBtn'),btnNow=document.getElementById('btnNow'),convertBtn=document.getElementById('convertBtn'),msgBox=document.getElementById('msgBox'),resultContainer=document.getElementById('result'),copyBtn=document.getElementById('copyBtn'),sourceList=document.getElementById('sourceList'),targetList=document.getElementById('targetList');
-    function debounce(fn,d){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),d);};}
-    function showMessage(t,type='error'){msgBox.textContent=t;msgBox.className=type+'-msg';setTimeout(()=>{if(msgBox.textContent===t)msgBox.textContent='';},4000);}
-    function setupAutocomplete(input,list){const handle=debounce((e)=>{const v=e.target.value.toLowerCase();list.innerHTML='';if(!v)return list.classList.remove('active');const m=cities.filter(c=>c.startsWith(v)).slice(0,10);if(!m.length)return list.classList.remove('active');const f=document.createDocumentFragment();m.forEach(city=>{const li=document.createElement('li');li.textContent=formatCityName(city);li.onclick=()=>{input.value=formatCityName(city);list.classList.remove('active');input.dispatchEvent(new Event('input'));};f.appendChild(li);});list.appendChild(f);list.classList.add('active');},150);input.addEventListener('input',handle);input.addEventListener('blur',()=>setTimeout(()=>list.classList.remove('active'),200));input.addEventListener('focus',(e)=>{if(e.target.value)handle(e);});}
-    setupAutocomplete(sourceInput,sourceList);setupAutocomplete(targetInput,targetList);
-    swapBtn.onclick=()=>{const t=sourceInput.value;sourceInput.value=targetInput.value;targetInput.value=t;sourceInput.focus();};
-    btnNow.onclick=()=>{const d=new Date();dateInput.value=d.toISOString().split('T')[0];timeInput.value=d.toTimeString().slice(0,5);showMessage('Auto-filled','success');};
-    function getTZOffsetMinutes(date,tz){const u=date.toLocaleString('en-US',{timeZone:'UTC'}),t=date.toLocaleString('en-US',{timeZone:tz});return Math.round((new Date(t).getTime()-new Date(u).getTime())/60000);}
-    form.onsubmit=(e)=>{e.preventDefault();msgBox.textContent='';resultContainer.classList.add('hidden');const sc=sourceInput.value.trim(),tc=targetInput.value.trim();if(!sc||!tc||!dateInput.value||!timeInput.value)return showMessage('Please fill all fields');const sTZ=resolveCity(sc),tTZ=resolveCity(tc);if(!sTZ||!tTZ)return showMessage('City not found: '+(!sTZ?sc:tc));convertBtn.disabled=true;convertBtn.classList.add('loading');setTimeout(()=>{try{const[dp,tp]=(dateInput.value+'T'+timeInput.value).split('T'),[y,m,d]=dp.split('-').map(Number),[h,min]=tp.split(':').map(Number),ub=new Date(Date.UTC(y,m-1,d,h,min)),inst=new Date(ub.getTime()-getTZOffsetMinutes(ub,sTZ)*60000),fo={year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false},st=new Intl.DateTimeFormat('en-GB',{...fo,timeZone:sTZ}).format(inst),tt=new Intl.DateTimeFormat('en-GB',{...fo,timeZone:tTZ}).format(inst),df={weekday:'long'},dtf={day:'numeric',month:'short',year:'numeric'},sd=new Intl.DateTimeFormat('en-US',{...df,timeZone:sTZ}).format(inst),td=new Intl.DateTimeFormat('en-US',{...df,timeZone:tTZ}).format(inst),sda=new Intl.DateTimeFormat('en-US',{...dtf,timeZone:sTZ}).format(inst),tda=new Intl.DateTimeFormat('en-US',{...dtf,timeZone:tTZ}).format(inst),getISO=(tz)=>new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:tz}).format(inst),sD=getISO(sTZ),tD=getISO(tTZ),ds=sD>tD?'next':sD<tD?'previous':'same',fOff=(tz)=>{const mins=getTZOffsetMinutes(inst,tz);return 'UTC'+(mins>=0?'+':'')+mins;};document.getElementById('resSourceCity').textContent=getDisplayName(sc);document.getElementById('resTargetCity').textContent=getDisplayName(tc);document.getElementById('resSourceDay').textContent=sd;document.getElementById('resTargetDay').textContent=td;document.getElementById('resSourceDate').textContent=sda;document.getElementById('resTargetDate').textContent=tda;document.getElementById('resSourceTime').textContent=st;document.getElementById('resTargetTime').textContent=tt;document.getElementById('resSourceOffset').textContent=fOff(sTZ);document.getElementById('resTargetOffset').textContent=fOff(tTZ);const sO=getTZOffsetMinutes(inst,sTZ),tO=getTZOffsetMinutes(inst,tTZ),diffM=Math.abs(tO-sO),diffH=Math.floor(diffM/60),diffMin=diffM%60;document.getElementById('calcDiffValue').textContent=diffH+'h '+diffMin+'m';document.getElementById('calcDiffLabel').textContent=tO>sO?getDisplayName(tc)+' is ahead':getDisplayName(tc)+' is behind';const db=document.getElementById('resDayBadge');db.className='day-badge';db.textContent='Target is on the '+ds+' day';db.classList.add('day-'+ds);resultContainer.classList.remove('hidden');resultContainer.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(err){console.error(err);showMessage('Error converting time');}finally{convertBtn.disabled=false;convertBtn.classList.remove('loading');}},400);};
-    copyBtn.onclick=async()=>{const txt=document.getElementById('resSourceCity').textContent+' ('+document.getElementById('resSourceOffset').textContent+'): '+document.getElementById('resSourceTime').textContent+' → '+document.getElementById('resTargetCity').textContent+' ('+document.getElementById('resTargetOffset').textContent+'): '+document.getElementById('resTargetTime').textContent;try{await navigator.clipboard.writeText(txt);copyBtn.textContent='✅ Copied!';}catch{copyBtn.textContent='❌ Failed';}setTimeout(()=>copyBtn.textContent='📋 Copy Result',2000);};
-    document.addEventListener('click',(e)=>{if(!e.target.closest('.input-group')){sourceList.classList.remove('active');targetList.classList.remove('active');}});
+    function formatCityName(name) {
+      const specialCases = { "new delhi": "New Delhi", "new york": "New York", "los angeles": "Los Angeles", "san francisco": "San Francisco", "kuala lumpur": "Kuala Lumpur", "rio de janeiro": "Rio de Janeiro", "sao paulo": "São Paulo", "ho chi minh": "Ho Chi Minh", "tel aviv": "Tel Aviv", "abu dhabi": "Abu Dhabi", "mexico city": "Mexico City", "buenos aires": "Buenos Aires", "cape town": "Cape Town" };
+      const key = name.toLowerCase();
+      if (specialCases[key]) return specialCases[key];
+      return name.replace(/\b\w/g, l => l.toUpperCase());
+    }
+    function resolveCity(input) { const key = input.toLowerCase().trim(); return CITY_TZ[key] || CITY_TZ[CITY_ALIASES[key]] || null; }
+    function getDisplayName(input) { const key = input.toLowerCase().trim(); const resolvedKey = CITY_ALIASES[key] || key; return formatCityName(resolvedKey); }
+
+    const cities = Object.keys(CITY_TZ).sort();
+    const now = new Date();
+    document.getElementById('sourceDate').value = now.toISOString().split('T')[0];
+    document.getElementById('sourceTime').value = now.toTimeString().slice(0,5);
+
+    const form = document.getElementById('timeForm');
+    const sourceInput = document.getElementById('sourceCity'), targetInput = document.getElementById('targetCity');
+    const dateInput = document.getElementById('sourceDate'), timeInput = document.getElementById('sourceTime');
+    const swapBtn = document.getElementById('swapBtn'), btnNow = document.getElementById('btnNow'), convertBtn = document.getElementById('convertBtn');
+    const msgBox = document.getElementById('msgBox'), resultContainer = document.getElementById('result'), copyBtn = document.getElementById('copyBtn');
+    const sourceList = document.getElementById('sourceList'), targetList = document.getElementById('targetList');
+
+    function debounce(fn, delay) { let timer; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); }; }
+    function showMessage(text, type = 'error') { msgBox.textContent = text; msgBox.className = `${type}-msg`; setTimeout(() => { if (msgBox.textContent === text) msgBox.textContent = ''; }, 4000); }
+
+    function setupAutocomplete(input, list) {
+      const handleInput = debounce((e) => {
+        const val = e.target.value.toLowerCase();
+        list.innerHTML = '';
+        if (!val) return list.classList.remove('active');
+        const matches = cities.filter(c => c.startsWith(val)).slice(0, 10);
+        if (matches.length === 0) return list.classList.remove('active');
+        const frag = document.createDocumentFragment();
+        matches.forEach(city => {
+          const li = document.createElement('li');
+          li.textContent = formatCityName(city);
+          li.setAttribute('role', 'option');
+          li.addEventListener('click', () => { input.value = formatCityName(city); list.classList.remove('active'); input.dispatchEvent(new Event('input')); });
+          frag.appendChild(li);
+        });
+        list.appendChild(frag);
+        list.classList.add('active');
+      }, 150);
+      input.addEventListener('input', handleInput);
+      input.addEventListener('blur', () => setTimeout(() => list.classList.remove('active'), 200));
+      input.addEventListener('focus', (e) => { if (e.target.value) handleInput(e); });
+    }
+    setupAutocomplete(sourceInput, sourceList);
+    setupAutocomplete(targetInput, targetList);
+
+    swapBtn.addEventListener('click', () => {
+      const tempCity = sourceInput.value; sourceInput.value = targetInput.value; targetInput.value = tempCity; sourceInput.focus();
+    });
+    btnNow.addEventListener('click', () => {
+      const d = new Date(); dateInput.value = d.toISOString().split('T')[0]; timeInput.value = d.toTimeString().slice(0,5);
+      showMessage('Auto-filled with current local time', 'success');
+    });
+
+    function getTZOffsetMinutes(date, tz) {
+      const utcStr = date.toLocaleString('en-US', { timeZone: 'UTC' });
+      const tzStr = date.toLocaleString('en-US', { timeZone: tz });
+      return Math.round((new Date(tzStr).getTime() - new Date(utcStr).getTime()) / 60000);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault(); msgBox.textContent = ''; resultContainer.classList.add('hidden');
+      const sourceCity = sourceInput.value.trim(), targetCity = targetInput.value.trim();
+      if (!sourceCity || !targetCity || !dateInput.value || !timeInput.value) return showMessage('Please fill in all fields.');
+      
+      const sourceTZ = resolveCity(sourceCity), targetTZ = resolveCity(targetCity);
+      if (!sourceTZ || !targetTZ) return showMessage(`City not recognized: ${!sourceTZ ? sourceCity : targetCity}`);
+
+      convertBtn.disabled = true; convertBtn.classList.add('loading');
+      setTimeout(() => {
+        try {
+          const [datePart, timePart] = `${dateInput.value}T${timeInput.value}`.split('T');
+          const [y, m, d] = datePart.split('-').map(Number), [h, min] = timePart.split(':').map(Number);
+          const utcBase = new Date(Date.UTC(y, m - 1, d, h, min));
+          const instant = new Date(utcBase.getTime() - (getTZOffsetMinutes(utcBase, sourceTZ) * 60000));
+
+          const formatOpts = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+          const sourceTime = new Intl.DateTimeFormat('en-GB', { ...formatOpts, timeZone: sourceTZ }).format(instant);
+          const targetTime = new Intl.DateTimeFormat('en-GB', { ...formatOpts, timeZone: targetTZ }).format(instant);
+
+          const dayFormatOpts = { weekday: 'long' };
+          const dateFormatOpts = { day: 'numeric', month: 'short', year: 'numeric' };
+          const sourceDay = new Intl.DateTimeFormat('en-US', { ...dayFormatOpts, timeZone: sourceTZ }).format(instant);
+          const targetDay = new Intl.DateTimeFormat('en-US', { ...dayFormatOpts, timeZone: targetTZ }).format(instant);
+          const sourceDate = new Intl.DateTimeFormat('en-US', { ...dateFormatOpts, timeZone: sourceTZ }).format(instant);
+          const targetDate = new Intl.DateTimeFormat('en-US', { ...dateFormatOpts, timeZone: targetTZ }).format(instant);
+
+          const getDateISO = (tz) => new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: tz }).format(instant);
+          const sDate = getDateISO(sourceTZ), tDate = getDateISO(targetTZ);
+          let dayStatus = 'same'; if (tDate > sDate) dayStatus = 'next'; else if (tDate < sDate) dayStatus = 'previous';
+
+          const formatOffset = (tz) => { const mins = getTZOffsetMinutes(instant, tz); return `UTC${mins >= 0 ? '+' : ''}${mins}`; };
+
+          document.getElementById('resSourceCity').textContent = getDisplayName(sourceCity);
+          document.getElementById('resTargetCity').textContent = getDisplayName(targetCity);
+          document.getElementById('resSourceDay').textContent = sourceDay;
+          document.getElementById('resTargetDay').textContent = targetDay;
+          document.getElementById('resSourceDate').textContent = sourceDate;
+          document.getElementById('resTargetDate').textContent = targetDate;
+          document.getElementById('resSourceTime').textContent = sourceTime;
+          document.getElementById('resTargetTime').textContent = targetTime;
+          document.getElementById('resSourceOffset').textContent = formatOffset(sourceTZ);
+          document.getElementById('resTargetOffset').textContent = formatOffset(targetTZ);
+
+          const dayBadge = document.getElementById('resDayBadge');
+          dayBadge.className = 'day-badge'; dayBadge.textContent = `Target is on the ${dayStatus} day`; dayBadge.classList.add(`day-${dayStatus}`);
+          resultContainer.classList.remove('hidden'); resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (err) { console.error(err); showMessage('Invalid date format or timezone error.'); }
+        finally { convertBtn.disabled = false; convertBtn.classList.remove('loading'); }
+      }, 400);
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = `${document.getElementById('resSourceCity').textContent} (${document.getElementById('resSourceOffset').textContent}): ${document.getElementById('resSourceTime').textContent} → ${document.getElementById('resTargetCity').textContent} (${document.getElementById('resTargetOffset').textContent}): ${document.getElementById('resTargetTime').textContent}`;
+      try { await navigator.clipboard.writeText(text); copyBtn.textContent = '✅ Copied!'; } catch { copyBtn.textContent = '❌ Copy failed'; }
+      setTimeout(() => copyBtn.textContent = '📋 Copy Result', 2000);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.input-group')) { sourceList.classList.remove('active'); targetList.classList.remove('active'); }
+    });
   </script>
 </body>
 </html>
