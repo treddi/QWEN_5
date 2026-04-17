@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>World Time Converter | Convert Time Between Cities Instantly (24h Format)</title>
+  <meta name="description" content="Free timezone converter with automatic DST handling. Convert local time between 500+ global cities instantly.">
+  <meta name="theme-color" content="#8b5cf6">
+  <style>
+    :root {
+      --bg: #0f172a; --bg-secondary: #1e293b; --card: rgba(30, 41, 59, 0.8);
+      --primary: #8b5cf6; --primary-hover: #7c3aed; --text: #f8fafc;
+      --text-muted: #94a3b8; --border: rgba(148, 163, 184, 0.1);
+      --success: #10b981; --warning: #f59e0b; --danger: #f43f5e;
+      --radius: 12px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font); background: linear-gradient(135deg, var(--bg) 0%, #1e1b4b 100%);
+      color: var(--text); line-height: 1.5; min-height: 100vh;
+      display: flex; justify-content: center; align-items: center; padding: 20px;
+    }
+    .container { width: 100%; max-width: 800px; }
+    header { text-align: center; margin-bottom: 24px; }
+    header h1 { font-size: 1.85rem; font-weight: 700; margin-bottom: 6px;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    header p { color: var(--text-muted); font-size: 0.95rem; }
+    .card { background: var(--card); backdrop-filter: blur(10px);
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 24px; }
+    .input-group { margin-bottom: 32px; position: relative; }
+    .input-row { display: flex; gap: 8px; align-items: stretch; }
+    .input-row input { flex: 1; }
+    label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: var(--text-muted); }
+    input[type="text"], input[type="date"], input[type="time"] {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 1rem; font-family: var(--font); background: rgba(15, 23, 42, 0.6);
+      color: var(--text); transition: all 0.2s; }
+    input:focus { outline: none; border-color: var(--primary);
+      background: rgba(15, 23, 42, 0.8); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); }
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(224deg) brightness(103%) contrast(101%);
+      cursor: pointer; background-color: transparent; }
+    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 8px; max-height: 240px; overflow-y: auto;
+      list-style: none; z-index: 999; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+      display: none; margin-top: 8px; }
+    .autocomplete-list.active { display: block; }
+    .autocomplete-list li { padding: 10px 12px; cursor: pointer; font-size: 0.95rem;
+      border-bottom: 1px solid var(--border); color: var(--text); }
+    .autocomplete-list li:last-child { border-bottom: none; }
+    .autocomplete-list li:hover { background: rgba(139, 92, 246, 0.1); color: var(--primary); }
+    .btn-now { background: rgba(139, 92, 246, 0.1); border: 1.5px solid rgba(139, 92, 246, 0.3);
+      padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+      font-weight: 600; color: var(--primary); transition: all 0.2s; }
+    .btn-now:hover { background: rgba(139, 92, 246, 0.2); transform: translateY(-1px); }
+    #swapBtn { display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin: 0 auto 16px; background: transparent; border: 1.5px solid var(--border);
+      padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem;
+      font-weight: 500; color: var(--text-muted); transition: all 0.2s; }
+    #swapBtn:hover { background: var(--bg-secondary); color: var(--primary);
+      border-color: var(--primary); transform: rotate(180deg); }
+    #convertBtn { width: 100%; padding: 16px; margin-top: 12px; background: var(--primary);
+      color: white; border: none; border-radius: 8px; font-size: 1rem;
+      font-weight: 600; cursor: pointer; transition: all 0.2s; position: relative; }
+    #convertBtn:hover:not(:disabled) { background: var(--primary-hover);
+      transform: translateY(-1px); box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.3); }
+    #convertBtn:disabled { background: var(--text-muted); opacity: 0.5; cursor: not-allowed; }
+    #convertBtn.loading { color: transparent; }
+    #convertBtn.loading::after { content: ""; position: absolute; width: 20px; height: 20px;
+      top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid #fff;
+      border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+    .error-msg, .success-msg { font-size: 0.85rem; margin-top: 12px; min-height: 20px; text-align: center; }
+    .error-msg { color: var(--danger); } .success-msg { color: var(--success); }
+    .result-container { margin-top: 24px; padding: 20px; background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius);
+      animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .clock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .clock-item { background: var(--bg-secondary); padding: 12px; border-radius: 8px;
+      text-align: center; border: 1px solid var(--border); }
+    .clock-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 4px; }
+    .clock-city { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; color: var(--text); }
+    .clock-date { display: flex; flex-direction: column; align-items: center; margin-bottom: 6px; }
+    .clock-day { font-size: 0.95rem; font-weight: 600; color: var(--primary); margin-bottom: 1px; }
+    .clock-full-date { font-size: 0.8rem; color: var(--text-muted); }
+    .clock-time { font-size: 1.4rem; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+    .clock-offset { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+    .calculator-card { background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px; margin-top: 20px; text-align: center; position: relative; overflow: hidden; }
+    .calculator-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--primary), var(--success)); }
+    .calc-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-muted); margin-bottom: 12px; }
+    .calc-value { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .calc-label { font-size: 0.9rem; color: var(--primary); }
+    .day-badge { display: block; text-align: center; padding: 6px 10px; border-radius: 6px;
+      font-size: 0.85rem; font-weight: 600; margin: 12px auto 0; width: fit-content; }
+    .day-same { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .day-next { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .day-prev { background: rgba(244, 63, 94, 0.1); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.2); }
+    .copy-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+      margin-top: 14px; padding: 10px; background: transparent; border: 1.5px solid var(--border);
+      border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: var(--text-muted); transition: all 0.2s; }
+    .copy-btn:hover { background: var(--bg-secondary); color: var(--text); border-color: var(--primary); }
+    .hidden { display: none; }
+    @media (max-width: 480px) { .container { max-width: 480px; } .clock-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; } .card { padding: 20px 16px; }
+      .input-row { flex-direction: column; } .btn-now { width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <header><h1>🌍 World Time Converter</h1><p>Convert times between major global cities (24h format)</p></header>
+    <div class="card">
+      <form id="timeForm" novalidate>
+        <div class="input-group"><label for="sourceCity">Source City</label>
+          <input type="text" id="sourceCity" placeholder="e.g., Tokyo, New York, London" autocomplete="off">
+          <ul class="autocomplete-list" id="sourceList"></ul></div>
+        <div class="input-group"><label>Date & Time (24h format)</label><div class="input-row">
+          <input type="date" id="sourceDate" required><input type="time" id="sourceTime" step="60" required>
+          <button type="button" class="btn-now" id="btnNow">🕐 Now</button></div>
+          <div class="hint">Format: HH:MM (24-hour)</div></div>
+        <button type="button" id="swapBtn">⇄ Swap Cities</button>
+        <div class="input-group"><label for="targetCity">Target City</label>
+          <input type="text" id="targetCity" placeholder="e.g., Paris, Sydney, Dubai" autocomplete="off">
+          <ul class="autocomplete-list" id="targetList"></ul></div>
+        <button type="submit" id="convertBtn">Convert Time</button>
+        <div id="msgBox" class="error-msg"></div></form>
+      <div id="result" class="result-container hidden">
+        <div class="clock-grid">
+          <div class="clock-item"><div class="clock-label">Source</div><div class="clock-city" id="resSourceCity"></div>
+            <div class="clock-date"><span class="clock-day" id="resSourceDay"></span>
+            <span class="clock-full-date" id="resSourceDate"></span></div>
+            <div class="clock-time" id="resSourceTime"></div><div class="clock-offset" id="resSourceOffset"></div></div>
+          <div class="clock-item"><div class="clock-label">Target</div><div class="clock-city" id="resTargetCity"></div>
+            <div class="clock-date"><span class="clock-day" id="resTargetDay"></span>
+            <span class="clock-full-date" id="resTargetDate"></span></div>
+            <div class="clock-time" id="resTargetTime"></div><div class="clock-offset" id="resTargetOffset"></div></div></div>
+        <div class="calculator-card"><div class="calc-title">Time Difference</div>
+          <div class="calc-value" id="calcDiffValue">--</div><div class="calc-label" id="calcDiffLabel">Calculating...</div></div>
+        <div class="day-badge" id="resDayBadge"></div>
+        <button class="copy-btn" id="copyBtn">📋 Copy Result</button></div></div></div>
+  <script>
+    const CITY_ALIASES = {"delhi":"new delhi","bombay":"mumbai","madras":"chennai","calcutta":"kolkata","bangalore":"bengaluru"};
+    const CITY_TZ = {
+      "new york":"America/New_York","los angeles":"America/Los_Angeles","chicago":"America/Chicago",
+      "houston":"America/Chicago","phoenix":"America/Phoenix","philadelphia":"America/New_York",
+      "san antonio":"America/Chicago","san diego":"America/Los_Angeles","dallas":"America/Chicago",
+      "san jose":"America/Los_Angeles","austin":"America/Chicago","jacksonville":"America/New_York",
+      "fort worth":"America/Chicago","columbus":"America/New_York","charlotte":"America/New_York",
+      "san francisco":"America/Los_Angeles","indianapolis":"America/Indiana/Indianapolis",
+      "seattle":"America/Los_Angeles","denver":"America/Denver","washington dc":"America/New_York",
+      "boston":"America/New_York","el paso":"America/Denver","detroit":"America/Detroit",
+      "nashville":"America/Chicago","portland":"America/Los_Angeles","memphis":"America/Chicago",
+      "oklahoma city":"America/Chicago","las vegas":"America/Los_Angeles","louisville":"America/Kentucky/Louisville",
+      "baltimore":"America/New_York","milwaukee":"America/Chicago","albuquerque":"America/Denver",
+      "tucson":"America/Phoenix","fresno":"America/Los_Angeles","mesa":"America/Phoenix",
+      "sacramento":"America/Los_Angeles","atlanta":"America/New_York","kansas city":"America/Chicago",
+      "colorado springs":"America/Denver","miami":"America/New_York","raleigh":"America/New_York",
+      "omaha":"America/Chicago","long beach":"America/Los_Angeles","virginia beach":"America/New_York",
+      "oakland":"America/Los_Angeles","minneapolis":"America/Chicago","tulsa":"America/Chicago",
+      "tampa":"America/New_York","arlington":"America/Chicago","new orleans":"America/Chicago",
+      "wichita":"America/Chicago","cleveland":"America/New_York","bakersfield":"America/Los_Angeles",
+      "aurora":"America/Denver","anaheim":"America/Los_Angeles","honolulu":"Pacific/Honolulu",
+      "santa ana":"America/Los_Angeles","corpus christi":"America/Chicago","riverside":"America/Los_Angeles",
+      "lexington":"America/Kentucky/Louisville","stockton":"America/Los_Angeles","toledo":"America/New_York",
+      "st. paul":"America/Chicago","cincinnati":"America/New_York","anchorage":"America/Anchorage",
+      "greensboro":"America/New_York","plano":"America/Chicago","newark":"America/New_York",
+      "lincoln":"America/Chicago","henderson":"America/Los_Angeles","fort wayne":"America/Indiana/Indianapolis",
+      "jersey city":"America/New_York","st. petersburg":"America/New_York","chula vista":"America/Los_Angeles",
+      "buffalo":"America/New_York","madison":"America/Chicago","glendale":"America/Phoenix",
+      "norfolk":"America/New_York","winston-salem":"America/New_York","north las vegas":"America/Los_Angeles",
+      "irving":"America/Chicago","chesapeake":"America/New_York","gilbert":"America/Phoenix",
+      "hialeah":"America/New_York","garland":"America/Chicago","frisco":"America/Chicago",
+      "scottsdale":"America/Phoenix","boise":"America/Boise","richmond":"America/New_York",
+      "toronto":"America/Toronto","montreal":"America/Toronto","vancouver":"America/Vancouver",
+      "calgary":"America/Edmonton","edmonton":"America/Edmonton","ottawa":"America/Toronto",
+      "winnipeg":"America/Winnipeg","quebec city":"America/Toronto","hamilton":"America/Toronto",
+      "kitchener":"America/Toronto","london":"America/Toronto","victoria":"America/Vancouver",
+      "halifax":"America/Halifax","oshawa":"America/Toronto","windsor":"America/Toronto",
+      "saskatoon":"America/Regina","regina":"America/Regina","sherbrooke":"America/Toronto",
+      "st. john's":"America/St_Johns","barrie":"America/Toronto","kelowna":"America/Vancouver",
+      "london":"Europe/London","birmingham":"Europe/London","manchester":"Europe/London",
+      "glasgow":"Europe/London","liverpool":"Europe/London","leeds":"Europe/London",
+      "sheffield":"Europe/London","edinburgh":"Europe/London","bristol":"Europe/London",
+      "cardiff":"Europe/London","leicester":"Europe/London","coventry":"Europe/London",
+      "paris":"Europe/Paris","marseille":"Europe/Paris","lyon":"Europe/Paris",
+      "toulouse":"Europe/Paris","nice":"Europe/Paris","nantes":"Europe/Paris",
+      "strasbourg":"Europe/Paris","montpellier":"Europe/Paris","bordeaux":"Europe/Paris",
+      "lille":"Europe/Paris","rennes":"Europe/Paris","reims":"Europe/Paris",
+      "berlin":"Europe/Berlin","hamburg":"Europe/Berlin","munich":"Europe/Berlin",
+      "cologne":"Europe/Berlin","frankfurt":"Europe/Berlin","stuttgart":"Europe/Berlin",
+      "rome":"Europe/Rome","milan":"Europe/Rome","naples":"Europe/Rome",
+      "turin":"Europe/Rome","palermo":"Europe/Rome","genoa":"Europe/Rome",
+      "madrid":"Europe/Madrid","barcelona":"Europe/Madrid","valencia":"Europe/Madrid",
+      "seville":"Europe/Madrid","zaragoza":"Europe/Madrid","málaga":"Europe/Madrid",
+      "amsterdam":"Europe/Amsterdam","rotterdam":"Europe/Amsterdam","the hague":"Europe/Amsterdam",
+      "utrecht":"Europe/Amsterdam","eindhoven":"Europe/Amsterdam","tilburg":"Europe/Amsterdam",
+      "brussels":"Europe/Brussels","antwerp":"Europe/Brussels","ghent":"Europe/Brussels",
+      "charleroi":"Europe/Brussels","liège":"Europe/Brussels","bruges":"Europe/Brussels",
+      "zurich":"Europe/Zurich","geneva":"Europe/Zurich","basel":"Europe/Zurich",
+      "lausanne":"Europe/Zurich","bern":"Europe/Zurich","winterthur":"Europe/Zurich",
+      "vienna":"Europe/Vienna","graz":"Europe/Vienna","linz":"Europe/Vienna",
+      "salzburg":"Europe/Vienna","innsbruck":"Europe/Vienna","klagenfurt":"Europe/Vienna",
+      "lisbon":"Europe/Lisbon","porto":"Europe/Lisbon","amadora":"Europe/Lisbon",
+      "braga":"Europe/Lisbon","setúbal":"Europe/Lisbon","coimbra":"Europe/Lisbon",
+      "moscow":"Europe/Moscow","saint petersburg":"Europe/Moscow","novosibirsk":"Asia/Novosibirsk",
+      "yekaterinburg":"Asia/Yekaterinburg","nizhny novgorod":"Europe/Moscow","kazan":"Europe/Moscow",
+      "warsaw":"Europe/Warsaw","kraków":"Europe/Warsaw","łódź":"Europe/Warsaw",
+      "wrocław":"Europe/Warsaw","poznań":"Europe/Warsaw","gdańsk":"Europe/Warsaw",
+      "prague":"Europe/Prague","brno":"Europe/Prague","ostrava":"Europe/Prague",
+      "plzeň":"Europe/Prague","liberec":"Europe/Prague","olomouc":"Europe/Prague",
+      "budapest":"Europe/Budapest","debrecen":"Europe/Budapest","szeged":"Europe/Budapest",
+      "miskolc":"Europe/Budapest","pécs":"Europe/Budapest","győr":"Europe/Budapest",
+      "bucharest":"Europe/Bucharest","cluj-napoca":"Europe/Bucharest","timișoara":"Europe/Bucharest",
+      "iași":"Europe/Bucharest","constanța":"Europe/Bucharest","craiova":"Europe/Bucharest",
+      "sofia":"Europe/Sofia","plovdiv":"Europe/Sofia","varna":"Europe/Sofia",
+      "burgas":"Europe/Sofia","ruse":"Europe/Sofia","stara zagora":"Europe/Sofia",
+      "tokyo":"Asia/Tokyo","yokohama":"Asia/Tokyo","osaka":"Asia/Tokyo",
+      "nagoya":"Asia/Tokyo","sapporo":"Asia/Tokyo","fukuoka":"Asia/Tokyo",
+      "beijing":"Asia/Shanghai","shanghai":"Asia/Shanghai","guangzhou":"Asia/Shanghai",
+      "shenzhen":"Asia/Shanghai","chengdu":"Asia/Shanghai","tianjin":"Asia/Shanghai",
+      "mumbai":"Asia/Kolkata","new delhi":"Asia/Kolkata","bangalore":"Asia/Kolkata",
+      "hyderabad":"Asia/Kolkata","ahmedabad":"Asia/Kolkata","chennai":"Asia/Kolkata",
+      "bangkok":"Asia/Bangkok","jakarta":"Asia/Jakarta","singapore":"Asia/Singapore",
+      "kuala lumpur":"Asia/Kuala_Lumpur","ho chi minh":"Asia/Ho_Chi_Minh","hanoi":"Asia/Ho_Chi_Minh",
+      "manila":"Asia/Manila","yangon":"Asia/Yangon","phnom penh":"Asia/Phnom_Penh",
+      "dubai":"Asia/Dubai","abu dhabi":"Asia/Dubai","riyadh":"Asia/Riyadh",
+      "jeddah":"Asia/Riyadh","mecca":"Asia/Riyadh","medina":"Asia/Riyadh",
+      "doha":"Asia/Qatar","kuwait city":"Asia/Kuwait","manama":"Asia/Bahrain",
+      "muscat":"Asia/Muscat","salalah":"Asia/Muscat","tehran":"Asia/Tehran",
+      "tel aviv":"Asia/Jerusalem","jerusalem":"Asia/Jerusalem","haifa":"Asia/Jerusalem",
+      "cairo":"Africa/Cairo","alexandria":"Africa/Cairo","giza":"Africa/Cairo",
+      "lagos":"Africa/Lagos","kano":"Africa/Lagos","ibadan":"Africa/Lagos",
+      "accra":"Africa/Accra","kumasi":"Africa/Accra","tamale":"Africa/Accra",
+      "nairobi":"Africa/Nairobi","mombasa":"Africa/Nairobi","kisumu":"Africa/Nairobi",
+      "johannesburg":"Africa/Johannesburg","cape town":"Africa/Johannesburg","durban":"Africa/Johannesburg",
+      "sydney":"Australia/Sydney","melbourne":"Australia/Melbourne","brisbane":"Australia/Brisbane",
+      "perth":"Australia/Perth","adelaide":"Australia/Adelaide","gold coast":"Australia/Brisbane",
+      "auckland":"Pacific/Auckland","wellington":"Pacific/Auckland","christchurch":"Pacific/Auckland",
+      "fiji":"Pacific/Fiji","suva":"Pacific/Fiji","lautoka":"Pacific/Fiji",
+      "papeete":"Pacific/Tahiti","faaa":"Pacific/Tahiti","punaauia":"Pacific/Tahiti",
+      "noumea":"Pacific/Noumea","mont-dore":"Pacific/Noumea","dumbea":"Pacific/Noumea"
+    };
+    function formatCityName(name){const s={"new delhi":"New Delhi","new york":"New York","los angeles":"Los Angeles","san francisco":"San Francisco","kuala lumpur":"Kuala Lumpur","rio de janeiro":"Rio de Janeiro","sao paulo":"São Paulo","ho chi minh":"Ho Chi Minh","tel aviv":"Tel Aviv","abu dhabi":"Abu Dhabi","mexico city":"Mexico City","buenos aires":"Buenos Aires","cape town":"Cape Town"};return s[name.toLowerCase()]||name.replace(/\b\w/g,l=>l.toUpperCase());}
+    function resolveCity(i){const k=i.toLowerCase().trim();return CITY_TZ[k]||CITY_TZ[CITY_ALIASES[k]]||null;}
+    function getDisplayName(i){const k=i.toLowerCase().trim();return formatCityName(CITY_ALIASES[k]||k);}
+    const cities=Object.keys(CITY_TZ).sort(),now=new Date();
+    document.getElementById('sourceDate').value=now.toISOString().split('T')[0];
+    document.getElementById('sourceTime').value=now.toTimeString().slice(0,5);
+    const form=document.getElementById('timeForm'),sourceInput=document.getElementById('sourceCity'),targetInput=document.getElementById('targetCity'),dateInput=document.getElementById('sourceDate'),timeInput=document.getElementById('sourceTime'),swapBtn=document.getElementById('swapBtn'),btnNow=document.getElementById('btnNow'),convertBtn=document.getElementById('convertBtn'),msgBox=document.getElementById('msgBox'),resultContainer=document.getElementById('result'),copyBtn=document.getElementById('copyBtn'),sourceList=document.getElementById('sourceList'),targetList=document.getElementById('targetList');
+    function debounce(fn,d){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),d);};}
+    function showMessage(t,type='error'){msgBox.textContent=t;msgBox.className=type+'-msg';setTimeout(()=>{if(msgBox.textContent===t)msgBox.textContent='';},4000);}
+    function setupAutocomplete(input,list){const handle=debounce((e)=>{const v=e.target.value.toLowerCase();list.innerHTML='';if(!v)return list.classList.remove('active');const m=cities.filter(c=>c.startsWith(v)).slice(0,10);if(!m.length)return list.classList.remove('active');const f=document.createDocumentFragment();m.forEach(city=>{const li=document.createElement('li');li.textContent=formatCityName(city);li.onclick=()=>{input.value=formatCityName(city);list.classList.remove('active');input.dispatchEvent(new Event('input'));};f.appendChild(li);});list.appendChild(f);list.classList.add('active');},150);input.addEventListener('input',handle);input.addEventListener('blur',()=>setTimeout(()=>list.classList.remove('active'),200));input.addEventListener('focus',(e)=>{if(e.target.value)handle(e);});}
+    setupAutocomplete(sourceInput,sourceList);setupAutocomplete(targetInput,targetList);
+    swapBtn.onclick=()=>{const t=sourceInput.value;sourceInput.value=targetInput.value;targetInput.value=t;sourceInput.focus();};
+    btnNow.onclick=()=>{const d=new Date();dateInput.value=d.toISOString().split('T')[0];timeInput.value=d.toTimeString().slice(0,5);showMessage('Auto-filled','success');};
+    function getTZOffsetMinutes(date,tz){const u=date.toLocaleString('en-US',{timeZone:'UTC'}),t=date.toLocaleString('en-US',{timeZone:tz});return Math.round((new Date(t).getTime()-new Date(u).getTime())/60000);}
+    form.onsubmit=(e)=>{e.preventDefault();msgBox.textContent='';resultContainer.classList.add('hidden');const sc=sourceInput.value.trim(),tc=targetInput.value.trim();if(!sc||!tc||!dateInput.value||!timeInput.value)return showMessage('Please fill all fields');const sTZ=resolveCity(sc),tTZ=resolveCity(tc);if(!sTZ||!tTZ)return showMessage('City not found: '+(!sTZ?sc:tc));convertBtn.disabled=true;convertBtn.classList.add('loading');setTimeout(()=>{try{const[dp,tp]=(dateInput.value+'T'+timeInput.value).split('T'),[y,m,d]=dp.split('-').map(Number),[h,min]=tp.split(':').map(Number),ub=new Date(Date.UTC(y,m-1,d,h,min)),inst=new Date(ub.getTime()-getTZOffsetMinutes(ub,sTZ)*60000),fo={year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false},st=new Intl.DateTimeFormat('en-GB',{...fo,timeZone:sTZ}).format(inst),tt=new Intl.DateTimeFormat('en-GB',{...fo,timeZone:tTZ}).format(inst),df={weekday:'long'},dtf={day:'numeric',month:'short',year:'numeric'},sd=new Intl.DateTimeFormat('en-US',{...df,timeZone:sTZ}).format(inst),td=new Intl.DateTimeFormat('en-US',{...df,timeZone:tTZ}).format(inst),sda=new Intl.DateTimeFormat('en-US',{...dtf,timeZone:sTZ}).format(inst),tda=new Intl.DateTimeFormat('en-US',{...dtf,timeZone:tTZ}).format(inst),getISO=(tz)=>new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:tz}).format(inst),sD=getISO(sTZ),tD=getISO(tTZ),ds=sD>tD?'next':sD<tD?'previous':'same',fOff=(tz)=>{const mins=getTZOffsetMinutes(inst,tz);return 'UTC'+(mins>=0?'+':'')+mins;};document.getElementById('resSourceCity').textContent=getDisplayName(sc);document.getElementById('resTargetCity').textContent=getDisplayName(tc);document.getElementById('resSourceDay').textContent=sd;document.getElementById('resTargetDay').textContent=td;document.getElementById('resSourceDate').textContent=sda;document.getElementById('resTargetDate').textContent=tda;document.getElementById('resSourceTime').textContent=st;document.getElementById('resTargetTime').textContent=tt;document.getElementById('resSourceOffset').textContent=fOff(sTZ);document.getElementById('resTargetOffset').textContent=fOff(tTZ);const sO=getTZOffsetMinutes(inst,sTZ),tO=getTZOffsetMinutes(inst,tTZ),diffM=Math.abs(tO-sO),diffH=Math.floor(diffM/60),diffMin=diffM%60;document.getElementById('calcDiffValue').textContent=diffH+'h '+diffMin+'m';document.getElementById('calcDiffLabel').textContent=tO>sO?getDisplayName(tc)+' is ahead':getDisplayName(tc)+' is behind';const db=document.getElementById('resDayBadge');db.className='day-badge';db.textContent='Target is on the '+ds+' day';db.classList.add('day-'+ds);resultContainer.classList.remove('hidden');resultContainer.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(err){console.error(err);showMessage('Error converting time');}finally{convertBtn.disabled=false;convertBtn.classList.remove('loading');}},400);};
+    copyBtn.onclick=async()=>{const txt=document.getElementById('resSourceCity').textContent+' ('+document.getElementById('resSourceOffset').textContent+'): '+document.getElementById('resSourceTime').textContent+' → '+document.getElementById('resTargetCity').textContent+' ('+document.getElementById('resTargetOffset').textContent+'): '+document.getElementById('resTargetTime').textContent;try{await navigator.clipboard.writeText(txt);copyBtn.textContent='✅ Copied!';}catch{copyBtn.textContent='❌ Failed';}setTimeout(()=>copyBtn.textContent='📋 Copy Result',2000);};
+    document.addEventListener('click',(e)=>{if(!e.target.closest('.input-group')){sourceList.classList.remove('active');targetList.classList.remove('active');}});
+  </script>
+</body>
+</html>
